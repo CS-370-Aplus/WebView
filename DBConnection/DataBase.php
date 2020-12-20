@@ -110,7 +110,59 @@ class DataBase
 			return array($firstname, $lastname, $email);
 		}else return array('null', 'null', 'null');
 	}
-
+	
+	function checkEmail($table, $email){
+		$email = $this->prepareData($email);
+		$this->sql = "select * from " . $table . " where email = '" . $email . "'";
+		$result = mysqli_query($this->connect, $this->sql);
+		$row = mysqli_fetch_assoc($result);
+        if (mysqli_num_rows($result) != 0) {
+			$dbemail = $row['email'];
+			if($dbemail == $email){
+				$emailFound = true;
+			}else $emailFound = false;
+		}else $emailFound = false;
+		return $emailFound;
+	}
+	
+	function addResetCode($table, $email, $code){
+		$email = $this->prepareData($email);
+		$code = $this->prepareData($code);
+		$this->sql = "INSERT INTO " . $table . " (email, code) VALUES('" . $email . "', '" . $code . "')";
+		if (mysqli_query($this->connect, $this->sql)) {
+            return true;
+        } else return false;
+	}
+	
+	function getNextImageID(){
+		$this->sql = "select MAX('pid') from images";
+		$result = mysqli_query($this->connect, $this->sql);
+		$row = mysqli_fetch_assoc($result);
+		if (mysqli_num_rows($result) != 0) {
+			return $row['pid'];
+		}return '0';
+	}
+	
+	function addToImages($table, $itemid, $link){
+		$itemid = $this->prepareData($itemid);
+		$link = $this->prepareData($link);
+		$this->sql = "INSERT INTO " . $table . " (itemid, link) VALUES('" . $itemid . "' , '" . $link . "')";
+		if (mysqli_query($this->connect, $this->sql)) {
+            return true;
+        } else return false;
+	}
+		
+		
+	function additem($table, $id, $title, $color, $size, $gender, $description, $quantity, $price){
+		$id = $this->prepareData($id);
+		$title = $this->prepareData($title);
+		$color = $this->prepareData($color);
+		$size = $this->prepareData($size);
+		$gender = $this->prepareData($gender);
+		$description = $this->prepareData($description);
+		$quantity = $this->prepareData($quantity);
+		$price = $this->prepareData($price);
+		
 }
 
 ?>
